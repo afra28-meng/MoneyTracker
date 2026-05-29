@@ -1,0 +1,45 @@
+{
+  "name": "Aurum Ledger",
+  "short_name": "Ledger",
+  "description": "Black gold personal finance tracker with multi-currency accounts.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#090907",
+  "theme_color": "#090907",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Search",
+      "short_name": "Search",
+      "url": "./index.html?action=search",
+      "icons": [{ "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Income",
+      "short_name": "In",
+      "url": "./index.html?action=income",
+      "icons": [{ "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Expense",
+      "short_name": "Out",
+      "url": "./index.html?action=expense",
+      "icons": [{ "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Transfer",
+      "short_name": "Transfer",
+      "url": "./index.html?action=transfer",
+      "icons": [{ "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
+}

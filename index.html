@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aurum Ledger</title>
+    <meta name="theme-color" content="#090907" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Aurum Ledger" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="apple-touch-icon" href="./icon.svg" />
+    <link rel="stylesheet" href="./styles.css?v=20260529d" />
+  </head>
+  <body>
+    <main class="phone-shell" aria-label="Aurum Ledger money tracker">
+      <section class="screen is-active" id="screen-trans" aria-labelledby="trans-title">
+        <header class="topbar">
+          <button class="icon-btn" id="search-btn" aria-label="Search">
+            <span class="icon search"></span>
+          </button>
+          <h1 id="trans-title">Trans.</h1>
+          <span></span>
+        </header>
+
+        <div class="month-switch">
+          <button class="plain-btn month-nav" data-step="-1" aria-label="上个月">‹</button>
+          <strong id="trans-month-title">May 2026</strong>
+          <button class="plain-btn month-nav" data-step="1" aria-label="下个月">›</button>
+        </div>
+
+        <nav class="view-tabs" aria-label="交易展示方式">
+          <button class="view-tab is-active" data-view="daily">Daily</button>
+          <button class="view-tab" data-view="calendar">Calendar</button>
+          <button class="view-tab" data-view="monthly">Monthly</button>
+          <button class="view-tab" data-view="summary">Summary</button>
+          <button class="view-tab" data-view="description">Description</button>
+        </nav>
+
+        <section class="monthly-strip" aria-label="本月收支">
+          <div>
+            <span>Income</span>
+            <strong class="income" id="trans-income">¥ 0.00</strong>
+          </div>
+          <div>
+            <span>Exp.</span>
+            <strong class="expense" id="trans-expense">¥ 0.00</strong>
+          </div>
+          <div>
+            <span>Total</span>
+            <strong id="trans-total">¥ 0.00</strong>
+          </div>
+        </section>
+
+        <section class="trans-view is-active" id="view-daily" aria-label="每日交易列表">
+          <div id="daily-list"></div>
+        </section>
+
+        <section class="trans-view" id="view-calendar" aria-label="日历交易">
+          <div class="calendar-grid" id="calendar-grid"></div>
+        </section>
+
+        <section class="trans-view" id="view-monthly" aria-label="月度交易">
+          <div class="month-cards" id="monthly-list"></div>
+        </section>
+
+        <section class="trans-view" id="view-summary" aria-label="分类摘要">
+          <div class="summary-list" id="summary-list"></div>
+        </section>
+
+        <section class="trans-view" id="view-description" aria-label="描述列表">
+          <div class="description-list" id="description-list"></div>
+        </section>
+      </section>
+
+      <section class="screen" id="screen-stats" aria-labelledby="stats-title">
+        <header class="topbar topbar-stats">
+          <div class="segmented" role="tablist" aria-label="统计类型">
+            <button class="is-active" data-stats-mode="stats">Stats</button>
+            <button data-stats-mode="budget">Budget</button>
+          </div>
+          <button class="icon-btn budget-edit-btn" id="budget-edit-btn" aria-label="Edit budget">
+            <span class="icon pencil"></span>
+          </button>
+          <select class="period-select" aria-label="统计周期">
+            <option>M</option>
+            <option>Y</option>
+          </select>
+        </header>
+        <div class="month-switch">
+          <button class="plain-btn month-nav" data-step="-1" aria-label="上个月">‹</button>
+          <h1 id="stats-title">May 2026</h1>
+          <button class="plain-btn month-nav" data-step="1" aria-label="下个月">›</button>
+        </div>
+        <section class="stats-toggle">
+          <button>Income <span id="stats-income">¥ 0.00</span></button>
+          <button class="is-active">Exp. <span id="stats-expense">¥ 0.00</span></button>
+        </section>
+        <div class="stats-content is-active" id="stats-content">
+          <section class="chart-panel">
+            <div class="donut" id="donut-chart" aria-label="支出分类占比图"></div>
+            <div class="donut-center">
+              <span>Outcome</span>
+              <strong id="donut-total">¥ 0.00</strong>
+            </div>
+          </section>
+          <section class="rank-list" id="rank-list" aria-label="支出排行"></section>
+        </div>
+        <div class="stats-content" id="budget-content">
+          <section class="budget-overview">
+            <div>
+              <span>Remaining(Monthly)</span>
+              <strong id="budget-remaining">¥ 0.00</strong>
+            </div>
+            <button class="setting-pill" id="budget-setting-btn">Budget Setting ›</button>
+            <div class="budget-progress">
+              <div class="progress-meta">
+                <span>Monthly</span>
+                <strong id="budget-monthly">¥ 0.00</strong>
+              </div>
+              <div class="progress-track"><span id="budget-progress-bar"></span></div>
+              <div class="progress-meta">
+                <strong id="budget-used">0.00</strong>
+                <strong id="budget-percent">0%</strong>
+              </div>
+            </div>
+          </section>
+          <section class="budget-list" id="budget-list" aria-label="预算分类"></section>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-accounts" aria-labelledby="accounts-title">
+        <header class="topbar">
+          <span></span>
+          <h1 id="accounts-title">Accounts</h1>
+          <div class="top-actions">
+            <button class="icon-btn" id="edit-account-btn" aria-label="Edit accounts">
+              <span class="icon pencil"></span>
+            </button>
+            <button class="icon-btn" id="add-account-btn" aria-label="Add account">
+              <span class="icon plus"></span>
+            </button>
+          </div>
+        </header>
+        <section class="account-summary">
+          <div>
+            <span>Assets</span>
+            <strong class="income" id="asset-total">¥ 0.00</strong>
+          </div>
+          <div>
+            <span>Liabilities</span>
+            <strong class="expense" id="liability-total">¥ 0.00</strong>
+          </div>
+          <div>
+            <span>Total</span>
+            <strong id="net-total">¥ 0.00</strong>
+          </div>
+        </section>
+        <section class="currency-panel">
+          <select id="display-currency">
+            <option value="CNY">CNY ¥</option>
+            <option value="EUR">EUR €</option>
+            <option value="USD">USD US$</option>
+          </select>
+          <input id="manual-rate" type="number" min="0" step="0.0001" aria-label="Exchange rate" />
+          <button id="apply-manual-rate" class="gold-btn">Apply</button>
+        </section>
+        <section class="account-list" id="account-list"></section>
+      </section>
+
+      <section class="screen" id="screen-more" aria-labelledby="more-title">
+        <header class="topbar">
+          <span></span>
+          <h1 id="more-title">More</h1>
+          <strong class="version">1.0 AF</strong>
+        </header>
+        <section class="settings-list">
+          <h2>Data</h2>
+          <button id="export-records-btn"><span class="mini-icon">⇩</span><span class="setting-label"><strong>Export Records</strong><small>Export Trans. data for a date range</small></span></button>
+          <button id="import-records-btn"><span class="mini-icon">⇧</span><span class="setting-label"><strong>Import Records</strong><small>Restore Trans. data from a backup file</small></span></button>
+          <h2>Preferences</h2>
+          <button id="language-btn"><span class="mini-icon">Aa</span><span class="setting-label"><strong>Language</strong><small id="language-summary">English</small></span></button>
+        </section>
+      </section>
+
+      <button class="fab" id="add-trans-btn" aria-label="Add transaction">
+        <span class="icon plus"></span>
+      </button>
+
+      <nav class="bottom-nav" aria-label="主导航">
+        <button class="nav-item is-active" data-screen="trans">
+          <span class="nav-icon book"></span>
+          <strong>5/29</strong>
+        </button>
+        <button class="nav-item" data-screen="stats">
+          <span class="nav-icon bars"></span>
+          <strong>Stats</strong>
+        </button>
+        <button class="nav-item" data-screen="accounts">
+          <span class="nav-icon coins"></span>
+          <strong>Accounts</strong>
+        </button>
+        <button class="nav-item" data-screen="more">
+          <span class="nav-icon dots"></span>
+          <strong>More</strong>
+        </button>
+      </nav>
+    </main>
+
+    <dialog class="modal" id="transaction-modal">
+      <form method="dialog" class="modal-card" id="transaction-form">
+        <header>
+          <button value="cancel" class="icon-btn" aria-label="Close">‹</button>
+          <h2 id="transaction-modal-title">Add Trans.</h2>
+          <button value="save" class="gold-text">Save</button>
+        </header>
+        <input name="id" type="hidden" />
+        <div class="type-switch">
+          <input type="radio" id="type-income" name="type" value="income" />
+          <label for="type-income">Income</label>
+          <input type="radio" id="type-expense" name="type" value="expense" checked />
+          <label for="type-expense">Expense</label>
+          <input type="radio" id="type-transfer" name="type" value="transfer" />
+          <label for="type-transfer">Transfer</label>
+        </div>
+        <label>Date <input name="date" type="date" value="2026-05-29" /></label>
+        <label>Amount <input name="amount" type="number" min="0" step="0.01" value="88" /></label>
+        <label>Currency
+          <select name="currency">
+            <option value="CNY">CNY ¥</option>
+            <option value="EUR">EUR €</option>
+            <option value="USD">USD US$</option>
+          </select>
+        </label>
+        <div class="normal-fields" id="normal-fields">
+        <label>Category
+          <select name="category">
+            <option>Food</option>
+            <option>E-shopping</option>
+            <option>Transport</option>
+            <option>Apparel</option>
+            <option>Household</option>
+            <option>Travel</option>
+            <option>Grocery</option>
+            <option>Culture</option>
+            <option>Freelance</option>
+            <option>Salary</option>
+            <option>Transfer</option>
+            <option>Others</option>
+          </select>
+        </label>
+        <label>Account
+          <select name="account" id="trans-account-select"></select>
+        </label>
+        </div>
+        <div class="transfer-fields" id="transfer-fields">
+          <label>From <select name="fromAccount" id="transfer-from-select"></select></label>
+          <label>To <select name="toAccount" id="transfer-to-select"></select></label>
+          <label>Exchange rate <input name="transferRate" type="number" min="0" step="0.0001" value="7.82" /></label>
+          <label>To amount <input name="toAmount" type="number" min="0" step="0.01" value="688.16" /></label>
+          <label>Fees <input name="fees" type="number" min="0" step="0.01" value="0" /></label>
+        </div>
+        <label>Note <input name="note" type="text" value="Coffee" /></label>
+        <label>Description <textarea name="description" rows="3" placeholder="Add memo, receipt or details"></textarea></label>
+        <div class="modal-actions">
+          <button value="delete" class="danger-btn" id="delete-transaction-btn">Delete</button>
+          <button value="cancel" class="outline-btn">Cancel</button>
+          <button value="save" class="gold-btn">Add transaction</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="account-modal">
+      <form method="dialog" class="modal-card" id="account-form">
+        <header>
+          <button value="cancel" class="icon-btn" aria-label="Close">‹</button>
+          <h2 id="account-modal-title">Add Account</h2>
+          <button value="save" class="gold-text">Save</button>
+        </header>
+        <input name="id" type="hidden" />
+        <label>Name <input name="name" type="text" value="New Wallet" /></label>
+        <label>Group
+          <select name="group">
+            <option>Cash</option>
+            <option>Accounts</option>
+            <option>Card</option>
+            <option>Investments</option>
+          </select>
+        </label>
+        <label>Currency
+          <select name="currency">
+            <option value="CNY">CNY ¥</option>
+            <option value="EUR">EUR €</option>
+            <option value="USD">USD US$</option>
+          </select>
+        </label>
+        <label>Balance <input name="balance" type="number" step="0.01" value="1000" /></label>
+        <label class="check-row"><input name="liability" type="checkbox" /> Liability account</label>
+        <div class="modal-actions">
+          <button value="delete" class="danger-btn" id="delete-account-btn">Delete</button>
+          <button value="cancel" class="outline-btn">Cancel</button>
+          <button value="save" class="gold-btn">Add account</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="search-modal">
+      <form class="modal-card compact-card" id="search-form">
+        <header>
+          <button type="button" class="icon-btn" id="close-search-btn" aria-label="Close">‹</button>
+          <h2>Search</h2>
+          <button type="submit" class="gold-text">Done</button>
+        </header>
+        <input id="search-input" type="search" placeholder="Search category, account, note, description..." />
+        <section class="description-list" id="search-results"></section>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="budget-detail-modal">
+      <form method="dialog" class="modal-card compact-card">
+        <header>
+          <button value="cancel" class="icon-btn" aria-label="Back">‹</button>
+          <h2 id="budget-detail-title">Category</h2>
+          <button value="edit" class="icon-btn" id="budget-detail-edit" aria-label="Edit budget"><span class="icon pencil"></span></button>
+        </header>
+        <section class="account-summary">
+          <div><span>Budget</span><strong id="detail-budget">¥ 0.00</strong></div>
+          <div><span>Used Amount</span><strong class="expense" id="detail-used">¥ 0.00</strong></div>
+          <div><span>Remaining</span><strong id="detail-remaining">¥ 0.00</strong></div>
+        </section>
+        <section class="mini-chart" id="detail-chart"></section>
+        <section class="description-list" id="budget-detail-list"></section>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="budget-setting-modal">
+      <form method="dialog" class="modal-card compact-card" id="budget-setting-form">
+        <header>
+          <button value="cancel" class="icon-btn" aria-label="Close">‹</button>
+          <h2>Budget Setting</h2>
+          <button value="save" class="gold-text">Save</button>
+        </header>
+        <label>Total Budget <input name="total" type="number" min="0" step="0.01" /></label>
+        <section class="budget-setting-list" id="budget-setting-list"></section>
+        <div class="modal-actions two-actions">
+          <button value="cancel" class="outline-btn">Cancel</button>
+          <button value="save" class="gold-btn">Save budget</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="data-modal">
+      <form method="dialog" class="modal-card compact-card" id="data-form">
+        <header>
+          <button value="cancel" class="icon-btn" aria-label="Close">‹</button>
+          <h2 id="data-title">Export Records</h2>
+          <button value="confirm" class="gold-text">OK</button>
+        </header>
+        <input name="mode" type="hidden" />
+        <label>Start <input name="start" type="date" value="2026-05-01" /></label>
+        <label>End <input name="end" type="date" value="2026-05-31" /></label>
+        <label class="import-only">File <input name="file" type="file" accept="application/json,.json" /></label>
+        <p class="setting-description" id="data-description"></p>
+        <div class="modal-actions two-actions">
+          <button value="cancel" class="outline-btn">Cancel</button>
+          <button value="confirm" class="gold-btn" id="data-confirm-btn">Export</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="language-modal">
+      <form method="dialog" class="modal-card compact-card" id="language-form">
+        <header>
+          <button value="cancel" class="icon-btn" aria-label="Close">‹</button>
+          <h2>Language</h2>
+          <button value="save" class="gold-text">Save</button>
+        </header>
+        <label>Language
+          <select name="language">
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+            <option value="system">Follow System</option>
+          </select>
+        </label>
+        <p class="setting-description">Default is English. Changing this updates the app labels immediately.</p>
+        <div class="modal-actions two-actions">
+          <button value="cancel" class="outline-btn">Cancel</button>
+          <button value="save" class="gold-btn">Save language</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="./app.js?v=20260529d"></script>
+  </body>
+</html>
