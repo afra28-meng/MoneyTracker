@@ -1080,6 +1080,332 @@ button {
   transform: translateY(0);
 }
 
+/* Refined iPhone density */
+body {
+  font-size: 14px;
+}
+
+.screen {
+  padding: 18px 0 88px;
+}
+
+.topbar {
+  min-height: 50px;
+  padding: 0 16px;
+}
+
+.topbar h1,
+.month-switch h1 {
+  font-size: 20px;
+  font-weight: 740;
+}
+
+.icon-btn,
+.plain-btn {
+  width: 36px;
+  height: 36px;
+}
+
+.plain-btn {
+  font-size: 38px;
+}
+
+.month-switch {
+  grid-template-columns: 54px 1fr 54px;
+  padding: 4px 12px 12px;
+}
+
+.month-switch strong {
+  font-size: 19px;
+}
+
+.view-tab {
+  min-height: 44px;
+  font-size: 13px;
+}
+
+.monthly-strip,
+.account-summary {
+  padding: 10px 0;
+}
+
+.monthly-strip span,
+.account-summary span,
+.currency-panel label {
+  font-size: 12px;
+}
+
+.monthly-strip strong,
+.account-summary strong {
+  font-size: 17px;
+}
+
+.day-head {
+  gap: 10px;
+  padding: 10px 14px 9px;
+}
+
+.day-number {
+  font-size: 24px;
+}
+
+.weekday {
+  padding: 1px 7px;
+  font-size: 11px;
+}
+
+.day-income,
+.day-expense {
+  font-size: 14px;
+}
+
+.transaction-row {
+  grid-template-columns: 30px minmax(0, 0.68fr) minmax(0, 1fr) auto;
+  min-height: 58px;
+  padding: 8px 14px;
+}
+
+.emoji {
+  width: 26px;
+  height: 26px;
+  font-size: 15px;
+}
+
+.note {
+  font-size: 14px;
+}
+
+.category,
+.subtext {
+  font-size: 13px;
+}
+
+.subtext {
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+.amount {
+  font-size: 14px;
+}
+
+.month-card,
+.summary-row,
+.description-row,
+.rank-row,
+.account-row,
+.settings-list button {
+  min-height: 60px;
+  padding: 11px 16px;
+  gap: 10px;
+}
+
+.calendar-grid {
+  padding: 12px;
+}
+
+.calendar-cell {
+  min-height: 60px;
+  padding: 7px 5px;
+}
+
+.segmented button,
+.type-switch label {
+  min-height: 36px;
+  font-size: 13px;
+}
+
+.topbar-stats {
+  grid-template-columns: 1fr 36px 64px;
+  gap: 8px;
+}
+
+.period-select,
+.currency-panel select,
+.currency-panel input,
+.modal-card select,
+.modal-card input,
+.modal-card textarea {
+  min-height: 38px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.stats-toggle button {
+  min-height: 48px;
+  font-size: 14px;
+}
+
+.chart-panel {
+  min-height: 250px;
+}
+
+.donut {
+  width: 198px;
+}
+
+.donut-center {
+  width: 104px;
+  height: 104px;
+  gap: 4px;
+}
+
+.rank-row {
+  grid-template-columns: 58px 1fr auto;
+}
+
+.percent {
+  min-width: 44px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.budget-overview {
+  gap: 12px;
+  padding: 16px;
+}
+
+.budget-overview > div:first-child strong {
+  margin-top: 9px;
+  font-size: 28px;
+}
+
+.setting-pill {
+  min-height: 40px;
+  padding: 0 14px;
+  font-size: 14px;
+}
+
+.progress-track,
+.budget-bar {
+  height: 18px;
+}
+
+.budget-row {
+  grid-template-columns: minmax(100px, 0.76fr) minmax(110px, 1fr) auto;
+  min-height: 68px;
+  padding: 10px 16px;
+  gap: 10px;
+}
+
+.currency-panel {
+  grid-template-columns: 1fr 1fr 74px;
+  gap: 8px;
+  padding: 12px 16px;
+}
+
+.gold-btn,
+.outline-btn,
+.danger-btn {
+  min-height: 38px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.account-row small,
+.settings-list small,
+.budget-name small,
+.budget-numbers small {
+  font-size: 11px;
+}
+
+.settings-list h2 {
+  padding: 11px 16px 8px;
+  font-size: 13px;
+}
+
+.settings-list button {
+  grid-template-columns: 34px 1fr;
+  font-size: 15px;
+}
+
+.setting-label strong {
+  font-size: 15px;
+}
+
+.mini-icon {
+  width: 24px;
+}
+
+.fab {
+  right: 20px;
+  bottom: 82px;
+  width: 56px;
+  height: 56px;
+}
+
+.bottom-nav {
+  min-height: 72px;
+}
+
+.nav-item {
+  gap: 3px;
+}
+
+.nav-item strong {
+  font-size: 12px;
+}
+
+.nav-icon,
+.icon {
+  width: 23px;
+  height: 23px;
+}
+
+.nav-icon.book::before,
+.nav-icon.bars::before {
+  font-size: 23px;
+}
+
+.nav-icon.coins::before {
+  font-size: 25px;
+}
+
+.nav-icon.dots::before {
+  font-size: 21px;
+}
+
+.modal-card {
+  gap: 12px;
+  padding: 20px 16px;
+}
+
+.modal-card header {
+  grid-template-columns: 52px 1fr 52px;
+}
+
+.modal-card h2 {
+  font-size: 20px;
+}
+
+.modal-card label {
+  grid-template-columns: 92px 1fr;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.normal-fields,
+.transfer-fields {
+  gap: 12px;
+}
+
+.modal-actions {
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.empty-state {
+  padding: 28px 16px;
+  font-size: 13px;
+}
+
+.toast {
+  bottom: 82px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
 @media (max-width: 430px) {
   .phone-shell,
   .modal {
@@ -1090,11 +1416,11 @@ button {
   }
 
   .transaction-row {
-    grid-template-columns: 32px minmax(68px, 0.72fr) minmax(86px, 1fr) auto;
-    padding-inline: 14px;
+    grid-template-columns: 30px minmax(62px, 0.65fr) minmax(80px, 1fr) auto;
+    padding-inline: 12px;
   }
 
   .amount {
-    font-size: 15px;
+    font-size: 13px;
   }
 }
