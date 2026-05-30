@@ -28,6 +28,9 @@
 
 body {
   min-height: 100vh;
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
   margin: 0;
   display: grid;
   place-items: center;
@@ -62,13 +65,15 @@ button {
 .screen {
   display: none;
   height: 100%;
-  overflow-y: auto;
+  min-height: 0;
+  overflow: hidden;
   padding: 28px 0 104px;
   scrollbar-color: var(--gold) transparent;
 }
 
 .screen.is-active {
-  display: block;
+  display: flex;
+  flex-direction: column;
 }
 
 .topbar {
@@ -191,10 +196,23 @@ button {
 
 .trans-view {
   display: none;
+  min-height: 0;
 }
 
 .trans-view.is-active {
   display: block;
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#screen-stats .stats-content.is-active,
+#screen-more .settings-list,
+#screen-accounts .account-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .day-group {
@@ -1325,7 +1343,46 @@ body {
 }
 
 .mini-icon {
-  width: 24px;
+  position: relative;
+  width: 28px;
+  height: 28px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+}
+
+.mini-icon::before,
+.mini-icon::after {
+  content: "";
+  position: absolute;
+}
+
+.export-icon::before,
+.import-icon::before {
+  left: 7px;
+  right: 7px;
+  bottom: 6px;
+  height: 6px;
+  border: 2px solid var(--gold);
+  border-top: 0;
+  border-radius: 0 0 4px 4px;
+}
+
+.export-icon::after,
+.import-icon::after {
+  left: 50%;
+  top: 6px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--gold-2);
+  border-bottom: 2px solid var(--gold-2);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.import-icon::after {
+  top: 10px;
+  transform: translateX(-50%) rotate(225deg);
 }
 
 .fab {
@@ -1385,6 +1442,120 @@ body {
   font-size: 14px;
 }
 
+.modal-card label:not(.check-row) {
+  min-height: 48px;
+  border-bottom: 1px solid rgba(247, 241, 228, 0.15);
+}
+
+.modal-card input:not([type="checkbox"]),
+.modal-card select,
+.modal-card textarea,
+.line-picker {
+  min-height: 42px;
+  border: 0;
+  border-bottom: 1px solid rgba(247, 241, 228, 0.2);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  outline: none;
+}
+
+.modal-card input:focus,
+.modal-card select:focus,
+.modal-card textarea:focus,
+.line-picker:focus-visible {
+  border-bottom-color: var(--gold-2);
+  box-shadow: 0 1px 0 var(--gold-2);
+}
+
+.line-picker {
+  width: 100%;
+  padding: 0 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+dialog[open].sheet-modal {
+  display: grid;
+  align-items: end;
+}
+
+.sheet-modal .modal-card {
+  min-height: auto;
+  max-height: min(74vh, 690px);
+  border-radius: 18px 18px 0 0;
+  padding-bottom: max(18px, env(safe-area-inset-bottom));
+}
+
+.category-card header {
+  grid-template-columns: 52px 1fr 88px;
+}
+
+.sheet-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  overflow-y: auto;
+}
+
+.category-cell {
+  position: relative;
+  min-height: 82px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+}
+
+.category-cell > button,
+.category-cell.add-category {
+  width: 100%;
+  min-height: 82px;
+  display: grid;
+  place-content: center;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.category-cell span,
+.add-category span {
+  font-size: 19px;
+}
+
+.category-cell strong {
+  font-size: 13px;
+  font-weight: 620;
+}
+
+.category-delete {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 24px !important;
+  min-height: 24px !important;
+  display: none !important;
+  place-items: center !important;
+  border: 1px solid rgba(255, 97, 93, 0.38) !important;
+  border-radius: 50%;
+  background: rgba(255, 97, 93, 0.12) !important;
+  color: var(--red) !important;
+}
+
+.category-grid.is-editing .category-delete {
+  display: grid !important;
+}
+
 .normal-fields,
 .transfer-fields {
   gap: 12px;
@@ -1423,4 +1594,294 @@ body {
   .amount {
     font-size: 13px;
   }
+}
+
+/* Japanese minimal Maillard theme */
+:root {
+  color-scheme: light;
+  --bg: #f6efe3;
+  --paper: #fffaf1;
+  --panel: #fbf3e6;
+  --panel-2: #efe3d0;
+  --panel-3: #e4d3bd;
+  --line: rgba(94, 66, 42, 0.16);
+  --line-strong: rgba(94, 66, 42, 0.28);
+  --text: #362719;
+  --muted: #8c745e;
+  --faint: #b2a08f;
+  --gold: #9b6b43;
+  --gold-2: #c69a6b;
+  --red: #b45b4f;
+  --blue: #5b7f78;
+  --green: #7d8f64;
+  --shadow: rgba(82, 55, 31, 0.14);
+}
+
+body {
+  background:
+    linear-gradient(rgba(126, 92, 61, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 92, 61, 0.03) 1px, transparent 1px),
+    #efe4d3;
+  background-size: 22px 22px, 22px 22px, auto;
+  color: var(--text);
+}
+
+.phone-shell {
+  background: var(--bg);
+  border: 0;
+  box-shadow: 0 18px 54px rgba(83, 55, 31, 0.18);
+}
+
+.screen {
+  scrollbar-color: var(--gold) transparent;
+}
+
+.topbar,
+.month-switch,
+.view-tabs,
+.monthly-strip,
+.account-summary,
+.currency-panel,
+.bottom-nav {
+  background: rgba(246, 239, 227, 0.94);
+  backdrop-filter: blur(14px);
+}
+
+.topbar h1,
+.month-switch h1,
+.month-switch strong,
+.note,
+.amount,
+.account-row strong,
+.setting-label strong {
+  color: var(--text);
+}
+
+.plain-btn {
+  color: #6f4c31;
+}
+
+.icon-btn,
+.plain-btn {
+  border-radius: 999px;
+}
+
+.icon-btn:hover,
+.icon-btn:focus-visible,
+.plain-btn:hover,
+.plain-btn:focus-visible {
+  background: rgba(155, 107, 67, 0.08);
+  outline: none;
+}
+
+.view-tabs,
+.monthly-strip,
+.account-summary,
+.stats-toggle,
+.chart-panel,
+.budget-overview,
+.currency-panel,
+.day-group,
+.day-head,
+.transaction-row + .transaction-row,
+.month-card,
+.summary-row,
+.description-row,
+.rank-row,
+.account-row,
+.settings-list button,
+.settings-list h2,
+.mini-chart,
+.category-grid,
+.category-cell {
+  border-color: var(--line);
+}
+
+.view-tab.is-active::after,
+.summary-row .bar span {
+  height: 2px;
+  background: #8c6040;
+}
+
+.monthly-strip,
+.account-summary {
+  background: linear-gradient(180deg, rgba(255, 250, 241, 0.76), rgba(246, 239, 227, 0.9));
+}
+
+.day-head,
+.account-row.is-group,
+.setting-pill,
+.calendar-cell,
+.donut-center,
+.modal-card,
+.setting-description,
+.toast {
+  background: var(--paper);
+}
+
+.transaction-row,
+.description-row,
+.account-row:not(.is-group),
+.settings-list button,
+.budget-row,
+.category-cell > button,
+.category-cell.add-category {
+  background: transparent;
+}
+
+.transaction-row:hover,
+.transaction-row:focus-visible,
+.description-row:hover,
+.description-row:focus-visible,
+.account-row:not(.is-group):hover,
+.account-row:not(.is-group):focus-visible,
+.settings-list button:hover,
+.settings-list button:focus-visible,
+.budget-row:hover,
+.budget-row:focus-visible {
+  background: rgba(155, 107, 67, 0.07);
+}
+
+.weekday,
+.percent {
+  background: #ead9c2;
+  color: #6f4c31;
+}
+
+.emoji {
+  background: #f0dfc8;
+  box-shadow: inset 0 0 0 1px rgba(94, 66, 42, 0.08);
+}
+
+.calendar-cell {
+  border-width: 1px 0 0 1px;
+}
+
+.segmented,
+.type-switch {
+  border-color: var(--line-strong);
+  background: rgba(255, 250, 241, 0.74);
+  border-radius: 999px;
+}
+
+.segmented button,
+.type-switch label {
+  border-radius: 999px;
+  color: var(--muted);
+}
+
+.segmented .is-active,
+.type-switch input:checked + label {
+  background: #7d5337;
+  color: #fff8ec;
+  box-shadow: 0 3px 10px rgba(125, 83, 55, 0.16);
+}
+
+.period-select,
+.currency-panel select,
+.currency-panel input {
+  border-color: var(--line-strong);
+  background: var(--paper);
+  color: var(--text);
+}
+
+.modal-card input:not([type="checkbox"]),
+.modal-card select,
+.modal-card textarea,
+.line-picker {
+  border-bottom-color: rgba(94, 66, 42, 0.2);
+  color: var(--text);
+}
+
+.modal-card label:not(.check-row) {
+  border-bottom-color: rgba(94, 66, 42, 0.12);
+}
+
+.modal-card input:focus,
+.modal-card select:focus,
+.modal-card textarea:focus,
+.line-picker:focus-visible {
+  border-bottom-color: #8c6040;
+  box-shadow: 0 1px 0 #8c6040;
+}
+
+.gold-btn,
+.fab {
+  background: #7d5337;
+  color: #fff8ec;
+  box-shadow: 0 12px 28px rgba(125, 83, 55, 0.22);
+}
+
+.outline-btn {
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.gold-text,
+.nav-item.is-active,
+.nav-item.is-active strong,
+.donut-center strong,
+.is-editing .account-row:not(.is-group)::after {
+  color: #7d5337;
+}
+
+.danger-btn {
+  border-color: rgba(180, 91, 79, 0.28);
+  background: rgba(180, 91, 79, 0.08);
+}
+
+.progress-track,
+.budget-bar,
+.summary-row .bar {
+  background: rgba(94, 66, 42, 0.09);
+}
+
+.progress-track span,
+.budget-bar span,
+.mini-bar {
+  background: var(--blue);
+}
+
+.progress-track span.is-over,
+.budget-bar span.is-over,
+.mini-bar.is-over {
+  background: var(--red);
+}
+
+.donut {
+  filter: drop-shadow(0 12px 20px rgba(125, 83, 55, 0.12));
+}
+
+.mini-chart {
+  background:
+    linear-gradient(rgba(94, 66, 42, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(94, 66, 42, 0.05) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+.bottom-nav {
+  border-top-color: var(--line-strong);
+}
+
+.modal::backdrop {
+  background: rgba(72, 46, 26, 0.28);
+}
+
+.sheet-modal .modal-card {
+  box-shadow: 0 -18px 44px rgba(82, 55, 31, 0.14);
+}
+
+.mini-icon {
+  border-color: var(--line-strong);
+  background: #fff8ec;
+}
+
+.export-icon::before,
+.import-icon::before {
+  border-color: #7d5337;
+}
+
+.export-icon::after,
+.import-icon::after {
+  border-color: #9b6b43;
 }

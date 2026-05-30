@@ -1,12 +1,12 @@
 {
   "name": "Aurum Ledger",
   "short_name": "Ledger",
-  "description": "Black gold personal finance tracker with multi-currency accounts.",
+  "description": "Minimal personal finance tracker with multi-currency accounts.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#090907",
-  "theme_color": "#090907",
+  "background_color": "#f6efe3",
+  "theme_color": "#f6efe3",
   "orientation": "portrait",
   "icons": [
     {

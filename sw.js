@@ -1,4 +1,4 @@
-const CACHE_NAME = "aurum-ledger-v1";
+const CACHE_NAME = "aurum-ledger-v3";
 const ASSETS = [
   "./",
   "./index.html",

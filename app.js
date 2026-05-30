@@ -6,6 +6,25 @@ const state = {
   activeBudgetCategory: null,
   editingTransactionId: null,
   editingAccountId: null,
+  categoryEditMode: false,
+  categories: [
+    { name: "E-shopping", icon: "🛍" },
+    { name: "Grocery", icon: "🛒" },
+    { name: "Food", icon: "🍜" },
+    { name: "Household", icon: "🪑" },
+    { name: "Sports", icon: "🏋️" },
+    { name: "Transport", icon: "🚕" },
+    { name: "Apparel", icon: "🥼" },
+    { name: "Beauty", icon: "💄" },
+    { name: "Entertainment", icon: "👫" },
+    { name: "Culture", icon: "🖼" },
+    { name: "Travel", icon: "✈️" },
+    { name: "Health", icon: "🧘" },
+    { name: "Education", icon: "📄" },
+    { name: "Salary", icon: "💼", income: true },
+    { name: "Freelance", icon: "💻", income: true },
+    { name: "Others", icon: "👛" },
+  ],
   budgets: {
     total: 32000,
     categories: {
@@ -68,8 +87,8 @@ const symbols = {
 const weekNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const categoryColors = ["#dabb75", "#ff995f", "#ffd84f", "#63ddc7", "#80ceff", "#76d975", "#b78cff", "#ff7b7b"];
-const iconMap = { Food: "🍜", Travel: "✈️", Grocery: "🛒", Salary: "💼", Transfer: "⇄", Others: "👛", "E-shopping": "🛍", Freelance: "💻", Apparel: "🥼", Household: "🪑", Transport: "🚕", Culture: "🖼" };
-const budgetCategories = ["E-shopping", "Food", "Grocery", "Household", "Transport", "Apparel", "Culture", "Travel", "Others"];
+const iconMap = { Food: "🍜", Travel: "✈️", Grocery: "🛒", Salary: "💼", Transfer: "⇄", Others: "👛", "E-shopping": "🛍", Freelance: "💻", Apparel: "🥼", Household: "🪑", Transport: "🚕", Culture: "🖼", Sports: "🏋️", Beauty: "💄", Entertainment: "👫", Health: "🧘", Education: "📄" };
+const defaultBudgetCategories = ["E-shopping", "Food", "Grocery", "Household", "Transport", "Apparel", "Culture", "Travel", "Others"];
 
 const toCny = (amount, currency) => amount * state.ratesToCny[currency];
 const fromCny = (amount, currency) => amount / state.ratesToCny[currency];
@@ -125,6 +144,24 @@ function groupBy(items, keyGetter) {
     groups[key].push(item);
     return groups;
   }, {});
+}
+
+function getCategory(name) {
+  return state.categories.find((category) => category.name === name) || { name, icon: iconMap[name] || "👛" };
+}
+
+function getBudgetCategoryNames() {
+  const expenseCategories = state.categories.filter((category) => !category.income).map((category) => category.name);
+  return [...new Set([...defaultBudgetCategories, ...expenseCategories])];
+}
+
+function ensureCategoryExists(name, icon = "👛") {
+  if (!name || name === "Transfer" || state.categories.some((category) => category.name === name)) return;
+  state.categories.push({ name, icon: iconMap[name] || icon });
+}
+
+function currentTransactionType() {
+  return document.querySelector('#transaction-form [name="type"]:checked')?.value || "expense";
 }
 
 function renderTotals() {
@@ -248,14 +285,14 @@ function getCategoryAmount(category) {
 
 function getBudgetRows() {
   const statsCategories = getCategoryStats().map((item) => item.category);
-  return [...new Set([...budgetCategories, ...statsCategories])].map((category) => {
+  return [...new Set([...getBudgetCategoryNames(), ...statsCategories])].map((category) => {
     const used = getCategoryAmount(category);
     const budget = state.budgets.categories[category] || 0;
     const remaining = budget - used;
     const percent = budget ? Math.round((used / budget) * 100) : 0;
     return {
       category,
-      icon: iconMap[category] || "👛",
+      icon: getCategory(category).icon,
       used,
       budget,
       remaining,
@@ -413,6 +450,69 @@ function renderAccounts() {
   document.querySelector("#transfer-to-select").innerHTML = state.accounts.map((account) => `<option>${account.name}</option>`).join("");
 }
 
+function updateCategoryPicker(name) {
+  const category = getCategory(name);
+  const form = document.querySelector("#transaction-form");
+  form.elements.category.value = category.name;
+  document.querySelector("#category-picker-btn").textContent = `${category.icon} ${category.name}`;
+}
+
+function renderCategoryGrid() {
+  const grid = document.querySelector("#category-grid");
+  const type = currentTransactionType();
+  const categories = state.categories.filter((category) => (type === "income" ? category.income : !category.income));
+  grid.classList.toggle("is-editing", state.categoryEditMode);
+  grid.innerHTML = categories
+    .map((category) => `
+      <div class="category-cell">
+        <button type="button" data-category-name="${category.name}">
+          <span>${category.icon}</span>
+          <strong>${category.name}</strong>
+        </button>
+        <button type="button" class="category-delete" data-delete-category="${category.name}" aria-label="Delete ${category.name}">×</button>
+      </div>
+    `)
+    .join("") + `
+      <button type="button" class="category-cell add-category" id="add-category-btn">
+        <span>＋</span>
+        <strong>Add</strong>
+      </button>
+    `;
+}
+
+function openCategoryModal() {
+  state.categoryEditMode = false;
+  renderCategoryGrid();
+  document.querySelector("#category-modal").showModal();
+}
+
+function addCategory() {
+  const name = window.prompt(t("New category name", "新分类名称"));
+  if (!name?.trim()) return;
+  const icon = window.prompt(t("Icon or emoji", "图标或 Emoji"), "👛") || "👛";
+  ensureCategoryExists(name.trim(), icon.trim() || "👛");
+  const category = state.categories.find((item) => item.name === name.trim());
+  if (category) category.income = currentTransactionType() === "income";
+  updateCategoryPicker(name.trim());
+  renderCategoryGrid();
+  renderAll();
+}
+
+function deleteCategory(name) {
+  const isUsed = state.transactions.some((transaction) => transaction.category === name);
+  if (isUsed) {
+    showToast(t("This category is used by records and cannot be deleted.", "已有记录使用此分类，不能删除。"));
+    return;
+  }
+  state.categories = state.categories.filter((category) => category.name !== name);
+  delete state.budgets.categories[name];
+  if (document.querySelector("#transaction-form").elements.category.value === name) {
+    updateCategoryPicker(state.categories[0]?.name || "Others");
+  }
+  renderCategoryGrid();
+  renderAll();
+}
+
 function renderAll() {
   renderTotals();
   renderDaily();
@@ -510,6 +610,27 @@ function bindModals() {
     if (!row) return;
     document.querySelector("#search-modal").close();
     openTransactionModal(row.dataset.searchTransactionId);
+  });
+  document.querySelector("#category-picker-btn").addEventListener("click", openCategoryModal);
+  document.querySelector("#category-edit-btn").addEventListener("click", () => {
+    state.categoryEditMode = !state.categoryEditMode;
+    renderCategoryGrid();
+  });
+  document.querySelector("#category-grid").addEventListener("click", (event) => {
+    const addButton = event.target.closest("#add-category-btn");
+    if (addButton) {
+      addCategory();
+      return;
+    }
+    const deleteButton = event.target.closest("[data-delete-category]");
+    if (deleteButton) {
+      deleteCategory(deleteButton.dataset.deleteCategory);
+      return;
+    }
+    const categoryButton = event.target.closest("[data-category-name]");
+    if (!categoryButton) return;
+    updateCategoryPicker(categoryButton.dataset.categoryName);
+    document.querySelector("#category-modal").close();
   });
   document.querySelectorAll('#transaction-form [name="type"]').forEach((input) => {
     input.addEventListener("change", () => updateTransactionFields());
@@ -610,7 +731,7 @@ function bindModals() {
     if (event.submitter?.value !== "save") return;
     const data = new FormData(event.currentTarget);
     state.budgets.total = Number(data.get("total")) || 0;
-    budgetCategories.forEach((category) => {
+    getBudgetCategoryNames().forEach((category) => {
       state.budgets.categories[category] = Number(data.get(`budget-${category}`)) || 0;
     });
     showToast(t("Budget updated.", "预算已更新。"));
@@ -763,9 +884,15 @@ function applyLanguage() {
 }
 
 function updateTransactionFields() {
-  const type = document.querySelector('#transaction-form [name="type"]:checked').value;
+  const type = currentTransactionType();
   document.querySelector("#normal-fields").hidden = type === "transfer";
   document.querySelector("#transfer-fields").hidden = type !== "transfer";
+  if (type !== "transfer") {
+    const current = getCategory(document.querySelector("#transaction-form").elements.category.value);
+    if ((type === "income") !== Boolean(current.income)) {
+      updateCategoryPicker(type === "income" ? "Salary" : "Food");
+    }
+  }
   if (type === "transfer") updateTransferEstimate();
 }
 
@@ -814,11 +941,13 @@ function openTransactionModal(id = null, forcedType = null) {
   const transaction = state.transactions.find((item) => item.id === id);
   state.editingTransactionId = id;
   form.reset();
+  const selectedType = forcedType || transaction?.type || "expense";
   form.elements.id.value = transaction?.id || "";
   form.elements.date.value = transaction?.date || `${getMonthKey()}-01`;
   form.elements.amount.value = transaction?.amount ?? 88;
   form.elements.currency.value = transaction?.currency || "CNY";
-  form.elements.category.value = transaction?.category || "Food";
+  ensureCategoryExists(transaction?.category, transaction?.icon);
+  updateCategoryPicker(transaction?.category || (selectedType === "income" ? "Salary" : "Food"));
   form.elements.account.value = transaction?.account || state.accounts[0]?.name || "";
   form.elements.fromAccount.value = transaction?.fromAccount || transaction?.account || state.accounts[0]?.name || "";
   form.elements.toAccount.value = transaction?.toAccount || state.accounts[1]?.name || state.accounts[0]?.name || "";
@@ -827,7 +956,7 @@ function openTransactionModal(id = null, forcedType = null) {
   form.elements.fees.value = transaction?.fees || 0;
   form.elements.note.value = transaction?.note || "Coffee";
   form.elements.description.value = transaction?.description || "";
-  form.querySelector(`[name="type"][value="${forcedType || transaction?.type || "expense"}"]`).checked = true;
+  form.querySelector(`[name="type"][value="${selectedType}"]`).checked = true;
   updateTransactionFields();
   document.querySelector("#transaction-modal-title").textContent = transaction ? "Edit Trans." : "Add Trans.";
   document.querySelector("#delete-transaction-btn").hidden = !transaction;
@@ -909,10 +1038,10 @@ function groupBudgetTransactions(transactions) {
 
 function openBudgetSettingModal(category = null) {
   document.querySelector('#budget-setting-form [name="total"]').value = state.budgets.total;
-  document.querySelector("#budget-setting-list").innerHTML = budgetCategories
+  document.querySelector("#budget-setting-list").innerHTML = getBudgetCategoryNames()
     .map((item) => `
       <label class="budget-input-row ${item === category ? "is-focused" : ""}">
-        <span>${iconMap[item] || "👛"} ${item}</span>
+        <span>${getCategory(item).icon} ${item}</span>
         <input name="budget-${item}" type="number" min="0" step="0.01" value="${state.budgets.categories[item] || 0}" />
       </label>
     `)

@@ -2,15 +2,15 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
     <title>Aurum Ledger</title>
-    <meta name="theme-color" content="#090907" />
+    <meta name="theme-color" content="#f6efe3" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Aurum Ledger" />
     <link rel="manifest" href="./manifest.json" />
     <link rel="apple-touch-icon" href="./icon.svg" />
-    <link rel="stylesheet" href="./styles.css?v=20260529e" />
+    <link rel="stylesheet" href="./styles.css?v=20260530a" />
   </head>
   <body>
     <main class="phone-shell" aria-label="Aurum Ledger money tracker">
@@ -176,8 +176,8 @@
         </header>
         <section class="settings-list">
           <h2>Data</h2>
-          <button id="export-records-btn"><span class="mini-icon">⇩</span><span class="setting-label"><strong>Export Records</strong><small>Export Trans. data for a date range</small></span></button>
-          <button id="import-records-btn"><span class="mini-icon">⇧</span><span class="setting-label"><strong>Import Records</strong><small>Restore Trans. data from a backup file</small></span></button>
+          <button id="export-records-btn"><span class="mini-icon export-icon" aria-hidden="true"></span><span class="setting-label"><strong>Export Records</strong><small>Export Trans. data for a date range</small></span></button>
+          <button id="import-records-btn"><span class="mini-icon import-icon" aria-hidden="true"></span><span class="setting-label"><strong>Import Records</strong><small>Restore Trans. data from a backup file</small></span></button>
           <h2>Preferences</h2>
           <button id="language-btn"><span class="mini-icon">Aa</span><span class="setting-label"><strong>Language</strong><small id="language-summary">English</small></span></button>
         </section>
@@ -234,20 +234,8 @@
         </label>
         <div class="normal-fields" id="normal-fields">
         <label>Category
-          <select name="category">
-            <option>Food</option>
-            <option>E-shopping</option>
-            <option>Transport</option>
-            <option>Apparel</option>
-            <option>Household</option>
-            <option>Travel</option>
-            <option>Grocery</option>
-            <option>Culture</option>
-            <option>Freelance</option>
-            <option>Salary</option>
-            <option>Transfer</option>
-            <option>Others</option>
-          </select>
+          <input name="category" type="hidden" value="Food" />
+          <button type="button" class="line-picker" id="category-picker-btn">🍜 Food</button>
         </label>
         <label>Account
           <select name="account" id="trans-account-select"></select>
@@ -301,6 +289,20 @@
           <button value="cancel" class="outline-btn">Cancel</button>
           <button value="save" class="gold-btn">Add account</button>
         </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal sheet-modal" id="category-modal">
+      <form method="dialog" class="modal-card compact-card category-card" id="category-form">
+        <header>
+          <button value="cancel" class="icon-btn" aria-label="Close">‹</button>
+          <h2>Category</h2>
+          <div class="sheet-actions">
+            <button type="button" class="icon-btn" id="category-edit-btn" aria-label="Edit categories"><span class="icon pencil"></span></button>
+            <button value="cancel" class="icon-btn" aria-label="Close category">×</button>
+          </div>
+        </header>
+        <section class="category-grid" id="category-grid"></section>
       </form>
     </dialog>
 
@@ -392,6 +394,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="./app.js?v=20260529d"></script>
+    <script src="./app.js?v=20260529e"></script>
   </body>
 </html>
