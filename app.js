@@ -100,6 +100,14 @@ function formatMoney(amount, currency = state.displayCurrency) {
   })}`;
 }
 
+function formatCalendarMoney(amount) {
+  const value = fromCny(amount, state.displayCurrency);
+  return value.toLocaleString("en-US", {
+    minimumFractionDigits: Math.abs(value) >= 100 ? 0 : 1,
+    maximumFractionDigits: Math.abs(value) >= 100 ? 0 : 1,
+  });
+}
+
 function t(en, zh) {
   return state.language === "zh" ? zh : en;
 }
@@ -231,21 +239,37 @@ function renderTransactionRow(transaction) {
 function renderCalendar() {
   const grid = document.querySelector("#calendar-grid");
   const groups = groupBy(getVisibleTransactions(), (transaction) => Number(transaction.date.slice(-2)));
-  const daysInMonth = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth() + 1, 0).getDate();
-  const cells = Array.from({ length: daysInMonth }, (_, index) => {
-    const day = index + 1;
+  const year = state.currentMonth.getFullYear();
+  const month = state.currentMonth.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7;
+  const cellsNeeded = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+  const weekLabels = state.language === "zh" ? ["一", "二", "三", "四", "五", "六", "日"] : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const today = new Date();
+  const todayKey = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+
+  const weekdayHeader = weekLabels.map((label) => `<span class="calendar-weekday">${label}</span>`).join("");
+  const cells = Array.from({ length: cellsNeeded }, (_, index) => {
+    const dayOffset = index - firstWeekday + 1;
+    const date = new Date(year, month, dayOffset);
+    const day = date.getDate();
+    const isCurrentMonth = date.getMonth() === month;
     const transactions = groups[day] || [];
-    const expense = transactions.filter((item) => item.type === "expense").reduce((sum, item) => sum + transactionCny(item), 0);
-    const income = transactions.filter((item) => item.type === "income").reduce((sum, item) => sum + transactionCny(item), 0);
+    const currentTransactions = isCurrentMonth ? transactions : [];
+    const expense = currentTransactions.filter((item) => item.type === "expense").reduce((sum, item) => sum + transactionCny(item), 0);
+    const income = currentTransactions.filter((item) => item.type === "income").reduce((sum, item) => sum + transactionCny(item), 0);
+    const isToday = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}` === todayKey;
     return `
-      <div class="calendar-cell">
+      <div class="calendar-cell ${isCurrentMonth ? "" : "is-muted"} ${isToday ? "is-today" : ""}">
         <strong>${day}</strong>
-        ${income ? `<span class="income">+${displayFromCny(income)}</span>` : ""}
-        ${expense ? `<span class="expense">-${displayFromCny(expense)}</span>` : ""}
+        <span class="calendar-amounts">
+          ${expense ? `<em class="expense">-${formatCalendarMoney(expense)}</em>` : ""}
+          ${income ? `<em class="income">+${formatCalendarMoney(income)}</em>` : ""}
+        </span>
       </div>
     `;
   });
-  grid.innerHTML = cells.join("");
+  grid.innerHTML = weekdayHeader + cells.join("");
 }
 
 function renderMonthly() {
@@ -310,9 +334,12 @@ function renderSummary() {
         <span class="emoji">${item.icon}</span>
         <span>
           <strong>${item.category}</strong>
-          <span class="bar"><span style="width:${item.percent}%; background:${item.color}"></span></span>
+          <small>${item.percent}% of expenses</small>
         </span>
-        <strong>${displayFromCny(item.amount)}</strong>
+        <strong>
+          ${displayFromCny(item.amount)}
+          <small>${item.percent}%</small>
+        </strong>
       </div>
     `)
     .join("") || `<div class="empty-state">${t("No category summary this month.", "这个月还没有分类摘要。")}</div>`;

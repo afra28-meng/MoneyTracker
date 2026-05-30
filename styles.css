@@ -324,26 +324,65 @@ button {
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
-  padding: 16px;
+  gap: 12px 8px;
+  padding: 18px 16px 22px;
 }
 
 .calendar-cell {
   min-height: 72px;
-  padding: 8px 6px;
-  border: 1px solid var(--line);
-  background: var(--panel);
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 5px;
+  padding: 0 2px;
+  border: 0;
+  background: transparent;
+  text-align: center;
 }
 
 .calendar-cell strong {
-  display: block;
-  margin-bottom: 7px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  border-radius: 11px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 760;
 }
 
-.calendar-cell span {
+.calendar-weekday {
+  color: var(--muted);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.calendar-amounts {
+  display: grid;
+  gap: 1px;
+  min-height: 28px;
+  justify-items: center;
+}
+
+.calendar-amounts em {
   display: block;
   font-size: 11px;
-  line-height: 1.45;
+  font-style: normal;
+  font-weight: 760;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.calendar-cell.is-muted {
+  opacity: 0.28;
+}
+
+.calendar-cell.is-today strong {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--blue);
 }
 
 .month-cards,
@@ -386,18 +425,16 @@ button {
   grid-template-columns: 1fr auto;
 }
 
-.summary-row .bar {
-  height: 8px;
-  margin-top: 8px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.07);
+.summary-row small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 560;
 }
 
-.summary-row .bar span {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--gold), var(--gold-2));
+.summary-row > strong {
+  text-align: right;
 }
 
 .topbar-stats {
@@ -1219,12 +1256,24 @@ body {
 }
 
 .calendar-grid {
-  padding: 12px;
+  padding: 14px 12px 18px;
+  gap: 10px 6px;
 }
 
 .calendar-cell {
   min-height: 60px;
-  padding: 7px 5px;
+  padding: 0 1px;
+}
+
+.calendar-cell strong {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.calendar-amounts em {
+  font-size: 10px;
 }
 
 .segmented button,
@@ -1697,8 +1746,7 @@ body {
   border-color: var(--line);
 }
 
-.view-tab.is-active::after,
-.summary-row .bar span {
+.view-tab.is-active::after {
   height: 2px;
   background: #8c6040;
 }
@@ -1754,7 +1802,18 @@ body {
 }
 
 .calendar-cell {
-  border-width: 1px 0 0 1px;
+  border: 0;
+  background: transparent;
+}
+
+.calendar-cell strong {
+  background: #ede4d6;
+  box-shadow: inset 0 0 0 1px rgba(94, 66, 42, 0.04);
+}
+
+.calendar-cell.is-today strong {
+  background: #f8f2e8;
+  box-shadow: inset 0 0 0 2px #5b7f78;
 }
 
 .segmented,
@@ -1831,8 +1890,7 @@ body {
 }
 
 .progress-track,
-.budget-bar,
-.summary-row .bar {
+.budget-bar {
   background: rgba(94, 66, 42, 0.09);
 }
 
